@@ -2,7 +2,9 @@
 An ObjectPool<IModel> addition to the RabbitMQ .Net Client library.
 You basically have a pool of channels. You pick a channel when you need and return after publishing your message.
 
+
 I found below article when I needed a multiple channel publisher implementation for performance concerns:
+
 https://www.c-sharpcorner.com/article/publishing-rabbitmq-message-in-asp-net-core/
 
 So, I gathered all the codes in the article above and added some extra to form a class library and used it in my projects.
