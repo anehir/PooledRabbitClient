@@ -21,8 +21,8 @@ Sample usage on a .Net WebApi project:
             services.AddControllers();
             services.AddRabbit(new RabbitOptions()
             {
-                UserName = "devuser",
-                Password = "devuser",
+                UserName = "***",
+                Password = "***",
                 HostName = "localhost",
                 VHost = "/",
                 Port = 5672
