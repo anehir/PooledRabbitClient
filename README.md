@@ -9,9 +9,9 @@ https://www.c-sharpcorner.com/article/publishing-rabbitmq-message-in-asp-net-cor
 
 So, I gathered all the codes in the article above and added some extra to form a class library and used it in my projects.
 
-Simple usage on a .Net WebApi project:
+Sample usage on a .Net WebApi project:
  
-
+```cs
     public class Startup
     {
         ...
@@ -21,8 +21,8 @@ Simple usage on a .Net WebApi project:
             services.AddControllers();
             services.AddRabbit(new RabbitOptions()
             {
-                UserName = "devuser",
-                Password = "devuser",
+                UserName = "***",
+                Password = "***",
                 HostName = "localhost",
                 VHost = "/",
                 Port = 5672
