@@ -27,16 +27,16 @@ namespace WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            // services.AddRabbit(Configuration);
+            services.AddRabbit(Configuration);
             // above or below configuration will work
-            services.AddRabbit(new RabbitOptions()
-            {
-                UserName = "devuser",
-                Password = "devuser",
-                HostName = "localhost",
-                VHost = "/",
-                Port = 5672
-            });
+            //services.AddRabbit(new RabbitOptions()
+            //{
+            //    UserName = "devuser",
+            //    Password = "devuser",
+            //    HostName = "localhost",
+            //    VHost = "/",
+            //    Port = 5672
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,13 +48,9 @@ namespace WebApi
             }
             var rabbitClient = app.ApplicationServices.GetService<IRabbitManager>();
             rabbitClient.QueueDeclare("hello", true, false, true, null);
-
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

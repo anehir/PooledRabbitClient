@@ -11,5 +11,16 @@ namespace PooledRabbitClient
         public string HostName { get; set; }
         public int Port { get; set; } = 5672;
         public string VHost { get; set; } = "/";
+        public int MaxChannelCount { get; set; } = Environment.ProcessorCount * 2;
+
+        public void CopyTo(RabbitOptions otherOptions)
+        {
+            otherOptions.UserName = this.UserName;
+            otherOptions.Password = this.Password;
+            otherOptions.HostName = this.HostName;
+            otherOptions.Port = this.Port;
+            otherOptions.VHost = this.VHost;
+            otherOptions.MaxChannelCount = this.MaxChannelCount;
+        }
     }
 }

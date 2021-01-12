@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.ObjectPool;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System;
@@ -15,9 +16,10 @@ namespace PooledRabbitClient
     {
         private readonly DefaultObjectPool<IModel> _objectPool;
 
-        public RabbitManager(IPooledObjectPolicy<IModel> objectPolicy)
+        public RabbitManager(IPooledObjectPolicy<IModel> objectPolicy, IOptions<RabbitOptions> options)
         {
-            _objectPool = new DefaultObjectPool<IModel>(objectPolicy, Environment.ProcessorCount * 2);
+            _objectPool = new DefaultObjectPool<IModel>(objectPolicy, options.Value.MaxChannelCount);
+
         }
 
         public void Publish<T>(T message, string exchange, string routeKey) where T : class
@@ -26,29 +28,23 @@ namespace PooledRabbitClient
             {
                 return;
             }
-            using (var channel = new PoolObject<IModel>(_objectPool))
-            {
-                var bytesToSend = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
-                var properties = channel.Item.CreateBasicProperties();
-                properties.Persistent = true;
-                channel.Item.BasicPublish(exchange, routeKey, properties, bytesToSend);
-            }
+            var bytesToSend = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
+            using var channel = new PoolObject<IModel>(_objectPool);
+            var properties = channel.Item.CreateBasicProperties();
+            properties.Persistent = true;
+            channel.Item.BasicPublish(exchange, routeKey, properties, bytesToSend);
         }
 
         public void ExchangeDeclare(string exchange, string type, bool durable, bool autoDelete, IDictionary<string, object> arguments)
         {
-            using (var channel = new PoolObject<IModel>(_objectPool))
-            {
-                channel.Item.ExchangeDeclare(exchange, type, durable, autoDelete, arguments);
-            }
+            using var channel = new PoolObject<IModel>(_objectPool);
+            channel.Item.ExchangeDeclare(exchange, type, durable, autoDelete, arguments);
         }
 
         public QueueDeclareOk QueueDeclare(string queue, bool durable, bool exclusive, bool autoDelete, IDictionary<string, object> arguments)
         {
-            using (var channel = new PoolObject<IModel>(_objectPool))
-            {
-                return channel.Item.QueueDeclare(queue, durable, exclusive, autoDelete, arguments);
-            }
+            using var channel = new PoolObject<IModel>(_objectPool);
+            return channel.Item.QueueDeclare(queue, durable, exclusive, autoDelete, arguments);
         }
 
     }
