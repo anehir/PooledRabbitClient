@@ -19,7 +19,7 @@ namespace PooledRabbitClient
         public RabbitManager(IPooledObjectPolicy<IModel> objectPolicy, IOptions<RabbitOptions> options)
         {
             _objectPool = new DefaultObjectPool<IModel>(objectPolicy, options.Value.MaxChannelCount);
-
+            
         }
 
         public void Publish<T>(T message, string exchange, string routeKey) where T : class
